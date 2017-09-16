@@ -3,7 +3,7 @@ import java.lang.*;
 public class Main{
 	public static void main(String[] args)
 	{
-		List<Integer>list = new ArrayList<Integer>();
+		Vector<Integer>list = new Vector<Integer>();
 		Scanner read = new Scanner(System.in);
         while(read.hasNext())
         {
