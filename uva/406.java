@@ -1,77 +1,75 @@
 import java.util.*;
- class Main{
- private static final int N= 1003;
- private static int[] mark = new int[N];
- private static Vector<Integer> primeList = new Vector<Integer>(); 
-  private static void sieve()
-  {
-     Arrays.fill(mark,1);
-     mark[0]=0;
-     primeList.add(1);
-     primeList.add(2);
-     for(int i=4;i<N;i+=2)mark[i]=0;
-     	int limit = (int) Math.sqrt(N);
-    for(int i=3;i<N;i+=2)
+class Main
+{
+    private static final int N = 1002;
+    private static int[] primeList = new int[N];
+    private static int[] index = new int[N];
+    private static void sievePrime()
     {
-       if(mark[i]==1)
-       { 
-       	primeList.add(i);
-       	for(int j=i*i;j<N;j+=i*2)mark[j]=0;
-       }
+        Arrays.fill(index, 1);
+        int countIndex = 0;
+        primeList[countIndex] = 1;
+        primeList[++countIndex] = 2;
+        index[1] = 0;
+        index[2] = 1;
+        for(int i = 4; i < N; i += 2) index[i] = 0;
+        for(int i = 3; i < N; i += 2)
+        {
+            if(index[i] == 1)
+            {
+                primeList[++countIndex] = i;
+                index[primeList[countIndex]] = countIndex;
+                for(int j = i * i; j < N; j += i * 2)
+                {
+                    index[j] = 0;
+                }
+            }
+        }
+
+        for(int i = 1; i < N; i++)
+            if(index[i] == 0) index[i] = index[i - 1];
+
+
+
     }
 
 
-  }
+    public static void main(String[] args)
+    {
 
-  private static int binarySearch(int firstIndex,int lastIndex,int num)
-  {
+        sievePrime();
 
-  	int mid =(int)((firstIndex+lastIndex)/2);
-  	 if(firstIndex>primeList.size()-1) return primeList.size()-1;
-  	 if(lastIndex<0) return 0;  	 
-      if(primeList.get(mid)==num) return mid;
-  	 else if( mid-1>0 && num>primeList.get(mid-1) && num<primeList.get(mid)) return mid-1;
-  	 else if(num<primeList.get(mid)) return binarySearch(firstIndex,mid-1,num);
-  	 else return binarySearch(mid+1,lastIndex,num);  
+        /* for(int i = 0; i < 50; i++)
+             System.out.print(primeList[i] + " ");*/
 
-  }
+        Scanner read = new Scanner(System.in);
 
-   public static void main(String[] args)
-   {
+        while(read.hasNext())
+        {
+            int n = read.nextInt();
+            int c = read.nextInt();
+            System.out.print(n + " " + c + ":");
+            int size = index[n] + 1;
+            c *= 2;
+            if(size % 2 == 1)c--;
+            int center = (int) size / 2;
+            int start = center - (int)c / 2;
+            if(start < 0)
+                for(int i = 0; i <= index[n] && i <= c; i++)
+                    System.out.print(" " + primeList[i]);
+            else
+            {
+                if(c % 2 == 0) c--;
+                for(int i = start; i <= center + (int)c / 2; i++)
+                    System.out.print(" " + primeList[i]);
+            }
 
-   	sieve();
-   	//for(int i=0;i<primeList.size();i++)
-   		//System.out.print(primeList.get(i)+" ");
-   	Scanner read = new Scanner(System.in);
-   	while(read.hasNext())
-   	{
-   		int n = read.nextInt();
-   		int c = read.nextInt();
-   		int index=binarySearch(0,primeList.size()-1,n);
-   		System.out.print(n+" "+c+":");
-   		int size=index+1;
-   		int center =(int)(size/2);
-   		//System.out.println(center);
-   		c*=2;
-   		if(size%2==1)c--;
-   		int firstC =(int) c/2;
-   		int start = center-firstC;
-   		if(start<0) 
-         for(int i=0;i<=index && i<=c;i++)
-         	System.out.print(" "+primeList.get(i));
-         else{
-   		for(int i=start;i<=center;i++)
-   			System.out.print(" "+primeList.get(i));
-   		if(c%2==0) firstC--;
-   		for(int i=center+1;i<=center+firstC;i++)
-   			System.out.print(" "+primeList.get(i));
-   			}
-   		  System.out.printf("\n\n");   		
-
-   	}
-   	read.close();
+            System.out.printf("\n\n");
 
 
-   }
+        }
+        read.close();
+
+    }
 
 }
