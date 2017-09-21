@@ -26,7 +26,7 @@ class Main
             }
         }
 
-        for(int i = 1; i < N; i++)
+        for(int i = 2; i < N; i++)
             if(index[i] == 0) index[i] = index[i - 1];
 
 
@@ -39,8 +39,8 @@ class Main
 
         sievePrime();
 
-        /* for(int i = 0; i < 50; i++)
-             System.out.print(primeList[i] + " ");*/
+        /* for(int i = 1; i < 50; i++)
+             System.out.print(primeList[index[i]] + " ");*/
 
         Scanner read = new Scanner(System.in);
 
