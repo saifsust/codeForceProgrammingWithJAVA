@@ -8,13 +8,14 @@ public class Main
     private static int[] rx = { 0, 1,  0,  -1};
     private static int[] cy = { -1, 0, 1, 0};
     private static  Queue<Pair> Q ;
+    private static Stack<Pair> S;
     private static boolean[][] visited ;
-    private static int row, col;
+    private static int row, col, cell;
 
     public static void main(String[] args)
     {
-       // Scanner read = FileFactory.read();
-       Scanner read = new Scanner(System.in);
+        //Scanner read = FileFactory.read();
+        Scanner read = new Scanner(System.in);
         /*    char a = read.next().charAt(0);
             System.out.println(a);*/
         int testCase = read.nextInt();
@@ -59,7 +60,11 @@ public class Main
             }
             //// fresh visited
             fresh();
-            int ans = bfsTravel(matrix, iniRow, iniCol);
+            //int ans = bfsTravel(matrix, iniRow, iniCol);
+            //int ans = dfsTravel(matrix, iniRow, iniCol);
+            cell = 0;
+             RecursiveTravel(matrix, iniRow, iniCol);
+             int ans=cell;
             System.out.println("Case " + test + ": " + ans);
             //if(test < testCase)System.out.println();
             //view(matrix);
@@ -71,6 +76,7 @@ public class Main
 
     private static void view(char[][] matrix)
     {
+
         for(int i = 0; i < matrix.length; i++)
         {
             for(int j = 0; j < matrix[0].length; j++)
@@ -91,6 +97,72 @@ public class Main
             Arrays.fill(visited[i], false);
         }
     }
+
+
+    // Recursive Solution of The Problem
+    private static void RecursiveTravel(char[][] matrix, int iniRow, int iniCol)
+    {
+           cell++;
+
+        for(int i = 0; i < rx.length; i++)
+        {
+            int x = iniRow + rx[i];
+            int y = iniCol + cy[i];
+            if(x >= 0 && x < row && y >= 0 && y < col)
+            {
+                if(matrix[x][y] == '.' && !visited[x][y])
+                {
+                 
+                    visited[x][y] = true;
+                     RecursiveTravel(matrix, x, y);
+                }
+
+            }
+        }
+        //return cell;
+
+    }
+
+
+    // DFS Solution of The Problem
+    private static int dfsTravel(char[][] matrix, int iniRow, int iniCol)
+    {
+        int dist = 1;
+        S = new Stack<Pair>();
+
+        S.push(new Pair(iniRow, iniCol));
+        visited[iniRow][iniCol] = true;
+        for(; !S.isEmpty();)
+            //  while(!S.isEmpty())
+        {
+            Pair head = S.peek();
+            S.pop();
+            //System.out.println(head);
+
+            for(int i = 0; i < rx.length; i++)
+            {
+                int x = rx[i] + head.getRow();
+                int y = cy[i] + head.getCol();
+                if(x >= 0 && x < row && y >= 0 && y < col)
+                {
+                    if(matrix[x][y] == '.' && !visited[x][y])
+                    {
+
+                        // System.out.println(x + " " + y + "  ");
+                        visited[x][y] = true;
+                        dist++;
+                        S.push(new Pair(x, y));
+                    }
+
+                }
+            }
+
+        }
+        return dist;
+
+    }
+
+
 
     //BFS Solution of The Problem
 
