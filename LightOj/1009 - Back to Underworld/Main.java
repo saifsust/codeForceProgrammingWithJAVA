@@ -1,164 +1,132 @@
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Vector;
+import java.util.BitSet;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 public class Main
 {
 
-    private static int[] V, U;
-    //private static Queue<Integer> Q ;
-    private static Stack<Integer> S ;
-    private static int counts[] = new int[3];
-    private static int maxFight[] ;
-
+    private static final int SIZE = 20000;
 
     public static void main(String[] args)
     {
 
-        Scanner read = FileFactory.read();
-        //Scanner read = new Scanner(System.in);
+        InputReader read = new InputReader(System.in);
+        PrintWriter out = new PrintWriter(System.out);
+        //Scanner read = FileFactory.read();
         int testCase = read.nextInt();
-
-        for(int test = 1; test <= testCase ; test++)
+        for(int test = 1 ; test <= testCase ; test++)
         {
-            int max = Integer.MIN_VALUE;
-            int dualFightNum = read.nextInt();
-            V = new int[dualFightNum];
-            U = new int[dualFightNum];
-            for(int i = 0; i < dualFightNum; i++)
+            System.gc();
+            BitSet colors = new BitSet(SIZE);
+            BitSet visited = new BitSet(SIZE);
+            BitSet isNode = new BitSet(SIZE);
+            int num = read.nextInt();
+            Vector<Integer>[] adj = new Vector[SIZE];
+            for(int i = 0; i < SIZE; i++)adj[i] = new Vector<Integer>();
+
+
+            for(int i = 0; i < num; i++)
             {
-                int u = read.nextInt();
-                int v = read.nextInt();
-                U[i] = u;
-                V[i] = v;
-                if(max < u)max = u;
-                if(max < v) max = v;
+                int u = read.nextInt() - 1;
+                int v = read.nextInt() - 1;
+                adj[u].add(v);
+                adj[v].add(u);
+                isNode.set(u, true);
+                isNode.set(v, true);
             }
 
-            maxFight = new int[max + 1];
-            // int ans = bfs(U[0]);
 
-
-            int ans = dfs(U[0]);
-            System.out.println("Case " + test + ": " + ans);
+            int ans = 0;
+            for(int i = 0; i < SIZE; i++)
+            {
+                if(!visited.get(i) && isNode.get(i))
+                {
+                    int[] counts = {0, 0};
+                    ans += bfs(i, adj, colors, visited, counts);
+                }
+            }
+            out.println("Case " + test + ": " + ans);
 
 
         }
+        out.close();
 
-        read.close();
 
     }
 
-/// recursive
 
-   // private static 
+    static int bfs(int init, List<Integer>[] adj, BitSet colors, BitSet visited, int[] counts)
+    {
+        Deque<Integer> Q = new LinkedList<Integer>();
+        Q.addLast(init);
+        colors.set(init, true);
+        visited.set(init, true);
+        while(!Q.isEmpty())
+        {
+            int parent = Q.removeFirst();
+            counts[colors.get(parent) ? 1 : 0]++;
+            for(int child : adj[parent])
+            {
+                if(!visited.get(child))
+                {
+                    colors.set(child, !colors.get(parent));
+                    visited.set(child, true);
+                    Q.addLast(child);
+                }
+            }
+        }
+        return Math.max(counts[0], counts[1]);
+    }
 
 
 
-    // dfs solution
 
-    private static int dfs(int init)
+
+
+
+    // faster  input class
+
+    static class InputReader
     {
 
-        S = new Stack<Integer>();
-        counts[1] = 1;
-        counts[2] = 0;
-        maxFight[init] = 1;
-        S.push(init);
-        while(!S.isEmpty())
+        private BufferedReader reader ;
+        private StringTokenizer tokenizer;
+        public InputReader(InputStream stream)
         {
+            this.reader = new BufferedReader(new InputStreamReader(stream), 32768);
+            this.tokenizer = null;
+        }
 
-            int father = S.peek();
-            S.pop();
-            for(int i = 0; i < V.length; i++)
+        // read String
+        public String next()
+        {
+            while(tokenizer == null || !tokenizer.hasMoreTokens())
             {
-                if(father == U[i])
+                try
                 {
-                    int child = V[i];
-                    if(maxFight[child] == 0)
-                    {
-                        if(maxFight[father] == 1)maxFight[child] = 2;
-                        else maxFight[child] = 1;
-                        counts[maxFight[child]]++;
-                        //dfs(child);
-                        S.push(child);
-                    }
+                    tokenizer = new StringTokenizer(this.reader.readLine());
                 }
-                else
+                catch(IOException ex)
                 {
-                    if(father == V[i])
-                    {
-                        int child = U[i];
-                        if(maxFight[child] == 0)
-                        {
-                            if(maxFight[father] == 1)maxFight[child] = 2;
-                            else maxFight[child] = 1;
-                            counts[maxFight[child]]++;
-                            //dfs(child);
-                            S.push(child);
-                        }
-                    }
-
+                    throw new RuntimeException(ex);
                 }
             }
+            return tokenizer.nextToken();
         }
-        return Math.max(counts[1], counts[2]);
+
+        // read Integer
+        public int nextInt()
+        {
+            return Integer.parseInt(next());
+        }
+
     }
-
-
-    // bfs traverse
-
-
-    /* private static int bfs(int init)
-     {
-         Q = new LinkedList<Integer>();
-
-         Q.add(init);
-
-         maxFight[init] = 1;
-         counts[1] = 1;
-         counts[2] = 0;
-         while(!Q.isEmpty())
-         {
-             int father = Q.poll();
-             for(int i = 0; i < V.length; i++)
-             {
-                 if(father == U[i])
-                 {
-                     int child = V[i];
-                     if(maxFight[child] == 0)
-                     {
-
-                         if(maxFight[father] == 1) maxFight[child] = 2;
-                         else maxFight[child] = 1;
-                         counts[maxFight[child]]++;
-                         Q.add(child);
-                     }
-                 }
-                 else
-                 {
-                     if(father == V[i])
-                     {
-                         int child = U[i];
-                         if(maxFight[child] == 0)
-                         {
-
-                             if(maxFight[father] == 1) maxFight[child] = 2;
-                             else maxFight[child] = 1;
-                             counts[maxFight[child]]++;
-                             Q.add(child);
-                         }
-
-                     }
-                 }
-             }
-         }
-
-         return Math.max(counts[1], counts[2]);
-
-     }*/
-
-
-
-    //Main
 
 }
