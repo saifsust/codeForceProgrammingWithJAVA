@@ -4,6 +4,9 @@ import java.io.*;
 public class Main
 {
 
+    private static int[] V, U;
+    //private static Queue<Integer> Q ;
+    private static Stack<Integer> S ;
     private static int counts[] = new int[3];
     private static int maxFight[] ;
 
@@ -19,49 +22,24 @@ public class Main
         {
             int max = Integer.MIN_VALUE;
             int dualFightNum = read.nextInt();
-            maxFight = new int[20002];
-            counts[1] = 0;
-            counts[2] = 0;
+            V = new int[dualFightNum];
+            U = new int[dualFightNum];
             for(int i = 0; i < dualFightNum; i++)
             {
                 int u = read.nextInt();
                 int v = read.nextInt();
-                if(maxFight[u] == 0 && maxFight[v] == 0)
-                {
-                    maxFight[u] = 1;
-                    maxFight[v] = 2;
-                    counts[maxFight[u]]++;
-                    counts[maxFight[v]]++;
-                    continue;
-                }
-                if(maxFight[u] == 0)
-                {
-                    if(maxFight[v] == 1)maxFight[u] = 2;
-                    else maxFight[u] = 1;
-                    counts[maxFight[u]]++;
-                    continue;
-                }
-                if(maxFight[v] == 0)
-                {
-                    if(maxFight[u] == 1)maxFight[v] = 2;
-                    else maxFight[v] = 1;
-                    counts[maxFight[v]]++;
-                    continue;
-
-                }
-
-
-
-                /*  if(max < u)max = u;
-                  if(max < v) max = v;*/
+                U[i] = u;
+                V[i] = v;
+                if(max < u)max = u;
+                if(max < v) max = v;
             }
-            /*
-                        maxFight = new int[max + 1];
-                        // int ans = bfs(U[0]);
+
+            maxFight = new int[max + 1];
+            // int ans = bfs(U[0]);
 
 
-                        int ans = dfs(U[0]);*/
-            System.out.println("Case " + test + ": " + Math.max(counts[1], counts[2]));
+            int ans = dfs(U[0]);
+            System.out.println("Case " + test + ": " + ans);
 
 
         }
@@ -70,14 +48,14 @@ public class Main
 
     }
 
-    /// recursive
+/// recursive
 
-    // private static
+   // private static 
 
 
 
     // dfs solution
-/*
+
     private static int dfs(int init)
     {
 
@@ -125,7 +103,7 @@ public class Main
         }
         return Math.max(counts[1], counts[2]);
     }
-*/
+
 
     // bfs traverse
 
