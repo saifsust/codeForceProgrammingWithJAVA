@@ -23,9 +23,9 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        Scanner read = FileFactory.read();
+        //Scanner read = FileFactory.read();
         //BufferedWriter writer = FileFactory.write();
-        //InputReader read = new InputReader(System.in);
+        InputReader read = new InputReader(System.in);
         PrintWriter out = new PrintWriter(System.out);
         int testCase = read.nextInt();
         for(int test = 1; test <= testCase; test++)
@@ -44,14 +44,21 @@ public class Main
 
 
     }
-
+    static class Comp implements Comparator<Integer>
+    {
+        public int compare(Integer first, Integer last)
+        {
+            return   first-last;
+        }
+    }
 
     private static int bfs(int s, int t)
     {
         System.gc();
-        Queue<Integer> Q = new LinkedList<Integer>();
+        PriorityQueue<Integer> Q = new PriorityQueue<Integer>(SIZE,new Comp());
+        //Queue<Integer> Q = new LinkedList<Integer>();
         int[] dist = new int[SIZE];
-        Arrays.fill(dist, -1);
+        Arrays.fill(dist, Integer.MAX_VALUE);
         dist[s] = 0;
         Q.add(s);
 
@@ -61,16 +68,16 @@ public class Main
             for(int from  : adj[to])
             {
                 int terget = to + from;
-                if(terget <= t && dist[terget] == -1)
+                if(terget <= t && dist[terget] > 1 + dist[to])
                 {
 
                     dist[terget] = 1 + dist[to];
                     Q.add(terget);
-                    if(terget == t) return dist[t];
+                    //if(terget == t) return dist[t];
                 }
             }
         }
-        return dist[t];
+        return dist[t] == Integer.MAX_VALUE ? -1 : dist[t];
 
 
     }
@@ -142,10 +149,3 @@ public class Main
 
 }
 
-class Comp implements Comparator<Integer>
-{
-    public int compare(Integer first, Integer last)
-    {
-        return   first - last;
-    }
-}
