@@ -1,3 +1,4 @@
+
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -12,10 +13,10 @@ const int NINF = INT_MIN;
 typedef vector<int>vi;
 typedef vector<vi>vvi;
 
-vi chainHead, depth, subtree, pnt, containChainNo, baseArray, baseArrayPos, segmentTree, edgeEndNode;
-
 const int LOG = 14;
-const int N = 1e4;
+const int N = 1e4+2;
+
+vi chainHead(N), depth(N), subtree(N), pnt(N), containChainNo(N), baseArray(N), baseArrayPos(N), segmentTree(3*N), edgeEndNode(N);
 
 int up[N][LOG], chainNo, baseArrayInd, ans = NINF;
 
@@ -108,7 +109,7 @@ void max_self(int &a, int b){
  **/
 int LCA(int u, int v){
 	if(depth[u] > depth[v]) swap(u, v);
-	cout << depth[u] << " " << depth[v] << endl;
+	//cout << depth[u] << " " << depth[v] << endl;
 	if(depth[u] != depth[v])
 		for(int i = LOG -1; i>= 0; i--)
 			if(depth[up[v][i]] >= depth[u]) v = up[v][i];
@@ -125,16 +126,6 @@ int LCA(int u, int v){
  * initialization
  **/
 void init(int n){
-	n += 5;
-	chainHead.resize(n, -1);
-	depth.resize(n);
-	subtree.resize(n);
-	pnt.resize(n);
-	baseArray.resize(n);
-	baseArrayPos.resize(n);
-	containChainNo.resize(n);
-	edgeEndNode.resize(n);
-	segmentTree.resize(3*n);
 	pnt[1] = -1;
 	depth[1] = 0;
 	chainNo = 0;
@@ -178,13 +169,13 @@ int query(int s, int e, int node, int L, int R){
  
 void query(int u, int v, int n){
 	int lca = LCA(u, v);
-	cerr <<"LCA " <<lca << endl;
-	cerr << "SBTREE "<< subtree[u] << " " << subtree[lca] << " " << subtree[v] << endl;
-	cerr <<"SGTREE " <<  segmentTree[1] << endl;
+	//cerr <<"LCA " <<lca << endl;
+	//cerr << "SBTREE "<< subtree[u] << " " << subtree[lca] << " " << subtree[v] << endl;
+	//cerr <<"SGTREE " <<  segmentTree[1] << endl;
 	ans = NINF;
 	query_hld(u, lca, n);
 	query_hld(v, lca, n);
-	
+	printf("%d\n", ans);
 }
 
 /**
@@ -196,27 +187,28 @@ void query_hld(int u, int v, int n){
 	if(depth[u] > depth[v]) swap(u,v);
 	int uChainNo = containChainNo[u], vChainNo = containChainNo[v];
 	while(true){
-		cerr <<"chain No. " <<  uChainNo << " " << vChainNo << endl;
+		//cerr <<"chain No. " <<  uChainNo << " " << vChainNo << endl;
 		if(uChainNo == vChainNo){
-			 cerr << "BaseArray Pos " << baseArrayPos[u] + 1 << " " << baseArrayPos[v] << endl;
+			if(u == v) break;
+			 //cerr << "BaseArray Pos " << baseArrayPos[u] + 1 << " " << baseArrayPos[v] << endl;
 		     int result = query(baseArrayPos[u] +1, baseArrayPos[v], 1, 1, n);
-		      cerr << "result " << result << endl;
+		      //cerr << "result " << result << endl;
 		      max_self(ans, result);
 		      break;
 		}
 		if(depth[u] > depth[v]) swap(u, v);
 		int head = chainHead[vChainNo];
-		cerr << "Head. " << head << " Chain No. " << vChainNo<< endl;
+		//cerr << "Head. " << head << " Chain No. " << vChainNo<< endl;
 		int result = query(baseArrayPos[head]+1, baseArrayPos[v], 1, 1, n);
-		cerr << "resutl " << result <<endl;
+		//cerr << "resutl " << result <<endl;
 		max_self(ans, result);
-		cerr << "head to child -> r " << baseArray[baseArrayPos[head]] << endl;
+		//cerr << "head to child -> r " << baseArray[baseArrayPos[head]] << endl;
 		max_self(ans, baseArray[baseArrayPos[head]]);
 		v = pnt[head];
 		vChainNo = containChainNo[v];
 	}
-	cerr <<"ANS " <<  ans << endl;
-	cout << ans << endl;
+	//cerr <<"ANS " <<  ans << endl;
+	//cout << ans << endl;
 }
 
 /**
@@ -224,14 +216,13 @@ void query_hld(int u, int v, int n){
  **/
 
 void update(int in, int val, int node, int L, int R){
-	if(in < L || in > R) return ;
-	if(L==R && L == in){
+	if(L==R){
 	 segmentTree[node] = baseArray[in] = val;
 	 return;
 	}
 	int mid = (L+R) >> 1;
-	update(in, val, node << 1, L, mid);
-	update(in, val, node << 1 | 1, mid + 1, R);
+	if(in <= mid) update(in, val, node << 1, L, mid);
+	else update(in, val, node << 1 | 1, mid + 1, R);
 	segmentTree[node] = max(segmentTree[node << 1] , segmentTree[node << 1 | 1]);
 	return;
 }
@@ -248,36 +239,44 @@ int main(int argc, char *argv[]){
 	fast;
 	//fin;
 	int test;
-	assert(cin >> test);
+	scanf("%d", &test);
 	for(int tt = 1; tt<= test; tt++){
 		int n, u, v, c;
-		assert(cin >> n);
+		scanf("%d", &n);
 		vvi G(n+1), C(n+1), edgeIndex(n+1);
 		for(int i = 0; i<n-1;i++){
-			assert(cin >> u >> v >> c);
+			scanf("%d%d%d", &u, &v, &c);
 			G[u].push_back(v);
 			G[v].push_back(u);
 			C[u].push_back(c);
 			C[v].push_back(c);
 			edgeIndex[u].push_back(i);
 			edgeIndex[v].push_back(i);
+			/**
+			 * reset
+			 **/
+			 chainHead[u] = chainHead[v] = -1;
+			 subtree[u]=subtree[v] = 0;
+			 depth[u] = depth[v] = 0;
 		}
-		init(n);
+		pnt[1] = -1;
+		chainNo = 0;
+		baseArrayInd = 0;
 		dfs(1,1,G, edgeIndex);
 		HLD(1, -1, 1, G, C);
 		build(1, n, 1);
-		string cmd;
-		while(cin >> cmd){
+		char cmd[100];
+		while(scanf("%s", cmd)){
 			if(cmd[0] == 'D') break;
 			if(cmd[0] == 'Q'){
-				assert(cin >> u >> v);
+				scanf("%d%d", &u, &v);
 				assert(1<= u && u<= n);
 				assert(1 <= v && v <= n);
 				query(u,v, n);
 			}
 			if(cmd[0] == 'C'){
 				int in, val;
-			    assert(cin >> in >> val);
+			    scanf("%d%d", &in, &val);
 			    assert(1 <= in && in <= n);
 				change(in, val, n);
 			}
