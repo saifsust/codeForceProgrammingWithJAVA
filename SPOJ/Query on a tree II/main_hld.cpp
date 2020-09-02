@@ -13,8 +13,8 @@ typedef vector<ii>vii;
 typedef vector<vii>vvii;
 typedef vector<int> vi;
 
-int pnt[LOG][N], chainHead[N],nodes[N], nodesIn[N], segmentTree[3*N],containerChainNo[N],dist[N], depth[N], subtree[N];
-int nodeCounter, chainNo;
+int pnt[N][LOG], chainHead[N],containerChainNo[N],dist[N], depth[N], subtree[N];
+int chainNo;
 /**
  * prototypes
  **/
@@ -29,9 +29,9 @@ void query(int u, int v);
  **/
  
 void DFS(int source, int root, vvii const &G){
-	pnt[0][source] = root;
+	pnt[source][0] = root;
 	for(int i = 1; i<LOG; i++){
-		pnt[i][source] = pnt[i-1][pnt[i-1][source]];
+		pnt[source][i] = pnt[pnt[source][i-1]][i-1];
 	}
 	subtree[source] = 1;
 	for(const auto child : G[source]){
@@ -89,16 +89,16 @@ void HLD(int source , int prev , vvii const &G){
 	  
 	  if(depth[u] != depth[v]){
 		  for(int i = LOG -1; i>= 0; i--){
-			  if(depth[pnt[i][v]] >= depth[u]) v = pnt[i][v];
+			  if(depth[pnt[v][i]] >= depth[u]) v = pnt[v][i];
 		  }
 	  }
 	  
 	  if(u == v) return u;
 	  
 	  for(int i = LOG - 1; i>= 0; i--){
-		  if(pnt[i][v] != pnt[i][u]) v = pnt[i][v], u=pnt[i][u];
+		  if(pnt[v][i] != pnt[u][i]) v = pnt[v][i], u=pnt[u][i];
 	  } 
-	  return pnt[0][u];
+	  return pnt[u][0];
   }
   
 /**
@@ -112,14 +112,11 @@ void HLD(int source , int prev , vvii const &G){
 	 int uChainNo = containerChainNo[u], vChainNo = containerChainNo[v];
 	 while(true){
 		 if(uChainNo == vChainNo){
-			 if(u == v){
-				 path.push_back(u);
-				 break;
-				}
 				while(v != u){
 					path.push_back(v);
-					v = pnt[0][v];
+					v = pnt[v][0];
 				}
+				path.push_back(u);
 			 break;
 		 }
 		 
@@ -128,10 +125,10 @@ void HLD(int source , int prev , vvii const &G){
 		 int head = chainHead[vChainNo];
 		 while(v != head){
 			 path.push_back(v);
-			 v = pnt[0][v];
+			 v = pnt[v][0];
 		 }
 		 path.push_back(head);
-		 v = pnt[0][head];
+		 v = pnt[head][0];
 		 vChainNo = containerChainNo[v];
 	 }
  }
@@ -149,25 +146,30 @@ void HLD(int source , int prev , vvii const &G){
 	  vi path;
 	  path.clear();
 	 int lca = LCA(u,v);
+	 //cerr << "LCA " << lca << endl;
 	 query(u, lca, path);
-	 
+	 //cerr << "PATH ";
+	 //debug(path);
 	 if(kth <= (int) path.size()){
 		 cout << path[kth-1] << endl;
 		 return;
 	 }
 	 kth -= (int) path.size();
+	 int back = path.back();
 	 path.clear();
 	 query(v,lca, path);
 	 reverse(ALL(path));
-	 cout << path[kth-1] << endl;
+	 //cerr << "PATH ";
+	 //debug(path);
+	 if(back != path.front()) kth--;
+	 if(kth<= (int) path.size()) cout << path[kth] << endl;
  }
  
  void query(int u, int v){
      
      int lca = LCA(u, v);
      //cerr << "LCA " << lca << endl;
-     int d= dist[u] + dist[v] - (dist[lca] << 1);
-     cout << d << endl;
+     cout <<  dist[u] + dist[v] - (dist[lca] << 1) << endl;;
  }
 
 int main(int argc, char *argv[]){
@@ -180,6 +182,8 @@ int main(int argc, char *argv[]){
 		int n, u, v,c;
 		scanf("%d", &n);
 		vvii G(n+1);
+		G.clear();
+		
 		for(int i = 0; i<n-1; i++){
 			scanf("%d%d%d", &u, &v, &c);
 			assert(1 <= u && u<= n);
@@ -188,17 +192,16 @@ int main(int argc, char *argv[]){
 			G[u].emplace_back(c, v);
 			G[v].emplace_back(c, u);
 			/**
-			 * reset
+			 * reset all value;
 			 **/
-			chainHead[u]=chainHead[v] = -1;
-			subtree[u]=subtree[v] = 0;
+			chainHead[u] = chainHead[v] = -1;
+			containerChainNo[u] = containerChainNo[v] = -1;
 			depth[u] = depth[v] = 0;
-			dist[u]=dist[v] = 0;
+			subtree[u] = subtree[v] = 0;
 		}
 		
-		depth[1] =0;
-		chainNo = 0;
-		dist[1] = 0;
+		pnt[1][0] = 1;
+		chainNo = 1;
 		DFS(1, 1, G);
 		HLD(1,1, G);
 		char cmd[100];
@@ -219,9 +222,6 @@ int main(int argc, char *argv[]){
 			}
 			
 		}
-		
-		
-		
 		
 	}
 	
