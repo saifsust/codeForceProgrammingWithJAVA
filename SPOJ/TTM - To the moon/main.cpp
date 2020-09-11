@@ -1,133 +1,98 @@
-/**
- * data persistency basic problem solving spoj
- * @Author Saiful Islam
- * @gmail saiful.sust.cse@gmail.com
- * @CSE SUST
- **/
-
 #include<bits/stdc++.h>
 using namespace std;
 
-#define FIO ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
-#define FIN freopen("in.txt", "r", stdin);
-#define FOUT freopen("out.txt", "w", stdio); 
-#define mp make_pair
-#define pb push_back
-#define eb emplace_back
-#define ll long long
+#define FIO ios::sync_with_stdio(false); cin.tie(0); cout.tie(0)
+#define FIN freopen("out.txt", "r", stdin)
+#define FOUT freopen("out.txt", "w", stdout)
 #define N 100011
+#define M 4000005
+#define ll long long
 
-
-typedef pair<int,int>ii;
-typedef map<int,int>mii;
+typedef map<int,int >mii;
+typedef pair<int,int>pii;
 
 struct Node{
-	ll sum = 0;
-	Node *left, *right;
-	Node(ll sum){
-		this->sum = sum,this->left = NULL, this->right = NULL;
+    ll sum = 0L;
+    Node *left, *right;
+    Node(){
+		scanf("%lld", &this->sum);
+		this->left = NULL;
+		this->right = NULL;
 	}
-	Node (ll sum , Node* left , Node* right){
-		this->sum=sum, this->left = left, this->right = right;
+	Node(ll sum, Node* left, Node* right){
+		this->sum = sum;
+		this->left = left;
+		this->right = right;
 	}
-	
-	Node* build(int, int);
-	Node* update(int,int, ll, int, int);
-	ll query(int, int, int , int);
+	Node* build(int , int);
+	Node* update(int,int,ll,int,int);
+	ll query(int,int,int,int);
 };
 
-ll A[N];
-Node* root[N];
+Node* root[M];
+ll num;
 
-/**
- * build segment tree
- **/
 Node* Node::build(int L, int R){
 	//cerr << "L " << L << " R " << R << endl;
-	if(L == R) return new Node(A[L]);
-	int M = (L + R) >> 1;
-	Node* left = this->build(L, M);
-	Node* right = this->build(M + 1, R);
-	return new Node(left->sum+ right->sum, left, right);
-}
-/**
- * update segment tree
- **/
-Node* Node::update(int s, int e, ll d, int L, int R){
-	//cerr << "L " << L << " R " << R << endl;
-	if(s>R || e< L) return this;
-	if(L == R) return new Node(this->sum + d);
-	int M = (L + R) >> 1;
-	Node* left = this->left->update(s,e,d,L,M);
-	Node* right = this->right->update(s,e, d, M + 1, R);
+	if(L == R) return new Node();
+	int mid = (L + R)>> 1;
+	Node *left  = this->build(L,  mid);
+	Node *right = this->build(mid+1,R);
 	return new Node(left->sum + right->sum, left, right);
 }
 
-/**
- * query into segment tree
- **/
- 
 ll Node::query(int s, int e, int L, int R){
-	if(s > R || e<L) return 0;
+	if (s > R || e < L) return 0L;
 	if(s <= L && R<= e) return this->sum;
-	int M = (L + R) >> 1;
-	return this->left->query(s, e, L, M) + this->right->query(s, e, M+ 1, R);
+	int mid = (L + R) >> 1;
+	return this->left->query(s,e,L,mid) + this->right->query(s, e, mid + 1, R);
 }
 
-
-void show(Node* tree){
-	if(tree== NULL) return;
-	show(tree->left);
-	cerr << tree->sum << " ";
-	show(tree->right);
+Node* Node::update(int s, int e, ll d, int L, int R){
+	if(s > R || e < L) return this;
+	if(L == R) return new Node(this->sum + d, NULL, NULL);
+	int mid = (L + R) >> 1;
+	Node *left = this->left->update(s, e, d, L, mid);
+	Node *right = this->right->update(s, e, d, mid + 1, R);
+	return new Node(left->sum + right->sum , left, right);
 }
 
-void debug(Node* tree){
-	show(tree);
-	cerr << endl;
-}
-
-
-int main(int argc, char *argv[]){
+int main(int argc, char* argv[]){
 	FIO;
-	//FIN;
+	FILE *file = FIN;
+	if(file == NULL) return 1;
 	int n, m;
-	assert(cin >> n >> m);
-	int L = 0, R = n-1;
-	for(int i = 0; i < n; i++) assert(cin >> A[i]);
+	scanf("%d%d", &n, &m);
+	int L = 1, R = n;
 	root[0] = root[0]->build(L, R);
-	//debug(root[0]);
-	char cmd[5];
-	int s,e, t, curr=0;
+	
+	//fclose(file);
+	
+	int curr = 0, s,e,t;
 	ll d;
-	for(int i = 0; i<m; i++){
-	   scanf("%s", cmd);
-		//cin >> cmd;
-		
-		if(cmd[0] == 'C'){
-		  scanf("%d%d%lld",&s,&e, &d);
-		  s--,e--;
-		  curr++;
-          root[curr] = root[curr-1]->update(s, e, d, L, R);
-		}
-		
+	char cmd[5];
+	for(int q = 1; q <=m; q++){
+		scanf("%s", cmd);
 		if(cmd[0] == 'Q'){
-			scanf("%d%d", &s, &e);
-			s--,e--;
-			printf("%lld\n", root[curr]->query(s,e, L, R));
+			scanf("%d%d", &s,&e);
+			cout << root[curr]->query(s, e, L, R) << endl;
 		}
 		
+		if (cmd[0] == 'C'){
+			scanf("%d%d%lld", &s, &e, &d);
+			root[curr+1] = root[curr]->update(s,e,d, L, R);
+			curr++;
+		}
 		if(cmd[0] == 'H'){
-			scanf("%d%d%d", &s,&e,&t);
-			s--,e--;
-			if(!root[t]) continue;
-			printf("%lld\n",root[t]->query(s,e, L, R));
+			scanf("%d%d", &s, &e);
+			cout << (root[t] == NULL ? 0 : root[t]->query(s, e, L, R)) << endl;
 		}
-		
-		if(cmd[0]  == 'B'){
+		if(cmd[0] == 'B'){
 			scanf("%d", &t);
-			curr=t;
+			for(int i = t + 1; i<= curr; i++) free(root[i]), root[i] = NULL;
+			curr = t;
 		}
 	}
-	return 0;
+	
+	
 }
