@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
 	 * inputter
 	 **/
 	
-	for(int i = 0; i<N; i++){
+	for(int i = 0; i<N-1; i++){
 		assert(cin >> u >> v >> c);
 		G[u].push_back(v);
 		G[v].push_back(u);
@@ -52,22 +52,21 @@ int main(int argc, char *argv[]){
 	inx = 0;
 	chainNo = 0;
 	DFS(1,1, G);
-	//HLD(1, -1, G,costINX, 0);
-	//build(1, 0, inx);
+	HLD(1, -1, G,costINX, 0);
+	build(1, 0, inx);
 	int q, lca, ans=INT_MIN;
 	char action;
-	/*
 	assert(cin >> q);
-	for(int t = 1; t<= q; t++){
+	for(int t = 1; t<=q; t++){
 		assert(cin >> action >> u >> v);
 		lca = LCA(u,v);
+		//cout << lca << endl;
 		query(u, lca ,0, inx-1, action, ans);
 		query(lca, v, 0, inx-1, action, ans);
 		if (action == 'f') continue;
 		cout << ans << endl;
 		
 	}
-	*/
 	return 0;
 }
 
@@ -83,7 +82,7 @@ void DFS(int node, int root, vvi &G){
 	}
 	sizeSubTree[node] = 1;
 	for(const int child : G[node]){
-		if(child == node || child == root) continue;
+		if(child == root) continue;
 		depth[child] = depth[node] + 1;
 		DFS(child, node, G);
 		sizeSubTree[node] += sizeSubTree[child];
@@ -133,7 +132,7 @@ int LCA(int u, int v){
 	if(depth[u] > depth[v]) swap(u, v);
 	if(depth[u] != depth[v]){
 		for(int i = LOG-1; i>= 0; i--){
-			if(depth[v] >= depth[u]) v = up[v][i];
+			if(depth[up[v][i]] >= depth[u]) v = up[v][i];
 		}
 	}
 	if(u == v) return u;
@@ -209,7 +208,7 @@ void query(int u, int v, int L, int R,char action, int &ans){
 		if(depth[u] > depth[v])swap(u,v);
 		int head = chainHead[chain[u]];
 		v = up[head][0];
-		
+		vChain = chain[v];
 		if(action == '?'){
 		ii temp = query(1, pos[head], pos[u], L, R);
 		ans = max(ans, max(temp.F, temp.S));
