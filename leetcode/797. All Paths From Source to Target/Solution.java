@@ -1,4 +1,5 @@
 class Solution {
+    private static List<Integer> entry = new ArrayList<Integer>();
     public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
         List<List<Integer>> paths = new ArrayList<>();
         if(graph.length == 0) return paths;
@@ -19,25 +20,29 @@ class Solution {
         }
         
         for( Integer dest : path[destination]){
-            List<Integer> entry = new ArrayList<Integer>();
+            entry.clear();
             entry.add(destination);
-            dfs(dest, path, paths, entry);
+            dfs(dest, path, paths);
+            
         }
         
         
         return paths;
     }
     
-    private void dfs(Integer dest, Set<Integer> path[], List<List<Integer>> paths, List<Integer>entry){
+    private void dfs(Integer dest, Set<Integer> path[], List<List<Integer>> paths){
         if(path[dest].contains(-1)){
             entry.add(0,dest);
-            paths.add(entry);
+            paths.add(new ArrayList<Integer>());
+            paths.get(paths.size()-1).addAll(entry);
+            entry.remove(0);
             return;
         }
         entry.add(0,dest);
         for(Integer next : path[dest]){
-             dfs(next, path, paths, entry);   
+             dfs(next, path, paths);   
         }
+        entry.remove(0);
         return;
     }
     
