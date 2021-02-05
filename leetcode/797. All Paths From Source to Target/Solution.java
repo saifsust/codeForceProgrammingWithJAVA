@@ -20,7 +20,8 @@ class Solution {
         
         for( Integer dest : path[destination]){
             List<Integer> entry = new ArrayList<Integer>();
-            entry.add()
+            entry.add(destination);
+            dfs(dest, path, paths, entry);
         }
         
         
@@ -29,13 +30,13 @@ class Solution {
     
     private void dfs(Integer dest, Set<Integer> path[], List<List<Integer>> paths, List<Integer>entry){
         if(path[dest].contains(-1)){
-            Collections.reverse(entry);
+            entry.add(0,dest);
             paths.add(entry);
             return;
         }
-        entry.add(dest);
+        entry.add(0,dest);
         for(Integer next : path[dest]){
-             dfs(next, path, paths);   
+             dfs(next, path, paths, entry);   
         }
         return;
     }
