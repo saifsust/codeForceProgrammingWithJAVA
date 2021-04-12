@@ -53,6 +53,20 @@ void swap(struct Node *&root, int x, int y){
    currX->next = temp;
   
 }
+/**
+ reverse single linked list
+**/
+void reverse(struct Node *&root){
+     struct Node *prev = NULL, *save=NULL;
+     while(root){
+		 save = root->next;
+		 root->next = prev;
+		 prev = root;
+		 root = save;
+	 }
+	 root = prev;
+}
+
 
 int main(){
 	
