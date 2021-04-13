@@ -104,6 +104,19 @@ public class Main{
        }
        return prev;
    }
+    
+      /**
+    * print middle of the linked list
+    */
+
+    private void middle(){
+          Node doubleNext=root, singleNext= root;
+          while(doubleNext != null && doubleNext.next != null){
+             doubleNext = doubleNext.next.next;
+              singleNext=singleNext.next;
+          }
+          System.out.printf("%d", singleNext.val);
+    }
 
   
 
