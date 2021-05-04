@@ -11,3 +11,16 @@
        
        return false;
     }
+/// using floyd's cycle finding algorithm. it is the faster algorithm
+  bool detectLoop(Node* head)
+    {
+       struct Node *walk = head, *faster = head;
+       
+       while(walk && faster && faster->next){
+           walk = walk->next;
+           faster = faster->next->next;
+           if(walk == faster) return true;
+       }
+       
+       return false;
+    }
