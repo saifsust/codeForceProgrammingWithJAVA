@@ -1,5 +1,5 @@
 /**
-* linked list rotated according to counter-clockwise. 
+* linked list rotated according to counter-clockwise with reversing the second part 
 */
 
 //Function to rotate a linked list.
@@ -19,4 +19,26 @@
 			temp->next = rev;
 		}else rotated = rev;
 		return rotated;		     	   
+    }
+
+// rotated the linked list without reversing the second part
+  //Function to rotate a linked list.
+    Node* rotate(Node* head, int k)
+    {
+		struct Node *temp = head,*prev = NULL, *rotated = NULL, *next = NULL;
+		while(temp && k){
+			prev = temp;
+			temp = temp-> next;
+			k--;
+		}
+	  
+	   if(temp){
+	   	 rotated = temp;
+		while(temp -> next)	temp = temp -> next;
+		 if(prev){
+		 	prev -> next = NULL;
+		   temp->next = head;	
+		 }
+		 return rotated;
+	   }else return head;		     	   
     }
