@@ -48,3 +48,32 @@
         if(_1s) return _1s;
          return _2s; 
     }
+
+
+// while solution
+
+Node* segregate(Node *head) {
+        Node *root = NULL, *temp = head;
+        int counter[5];
+        memset(counter, 0, sizeof(counter));
+        while(temp){
+            counter[temp->data]++;
+            temp = temp -> next;
+        }
+        
+        int i  = 0;
+        while(i <= 2){
+            if(counter[i] == 0) i++;
+            else {
+                if(root == NULL){
+                    root = new Node(i);
+                    temp = root;
+                }else {
+                    temp -> next = new Node(i);
+                    temp = temp -> next;
+                }
+                counter[i]--;
+            }
+        }
+        return root;
+    }
