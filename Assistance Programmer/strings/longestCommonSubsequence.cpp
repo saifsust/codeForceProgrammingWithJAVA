@@ -12,6 +12,14 @@ int64_t longestCommonSubsequence(string A, string B){
       }
       return dp[A.size()][B.size()];
 }
+// recursion approach to find longest common subsequence. 
+int64_t longestCommonSubsequence(string A, string B, size_t a, size_t b){
+    if( a == 0 || b == 0) return  0;
+    if(dp[a][b] != 0) return dp[a][b];
+    if(A[a-1] == B[b-1]) return dp[a][b] = longestCommonSubsequence(A,B, a-1, b-1) + 1;
+    return dp[a][b] = max(longestCommonSubsequence(A, B, a -1, b), longestCommonSubsequence(A, B, a, b-1));
+}
+
 
 
 int main(){
