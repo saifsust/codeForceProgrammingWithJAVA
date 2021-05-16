@@ -20,6 +20,19 @@ int64_t longestCommonSubsequence(string A, string B, size_t a, size_t b){
     return dp[a][b] = max(longestCommonSubsequence(A, B, a -1, b), longestCommonSubsequence(A, B, a, b-1));
 }
 
+// recursion and dynamic approach for longest common subsequence
+    int64_t LCS(string str, string str2, int first , int second, vector<vector<int>> &dp){
+        if(first >= str.size() || second >= str2.size()) return 0;
+        if(dp[first][second] != -1) return dp[first][second];
+        if(str[first]== str2[second]){
+            if(dp[first][second] != -1) return dp[first][second];
+            else return dp[first][second] = 1 + LCS(str, str2, first + 1, second + 1, dp);
+        } 
+        return  dp[first][second] = max(LCS(str, str2, first, second +1 , dp), LCS(str, str2, first + 1, second, dp));
+    }
+    
+ 
+
 
 
 int main(){
