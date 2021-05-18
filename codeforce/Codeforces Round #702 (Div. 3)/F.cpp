@@ -25,13 +25,11 @@ int main(){
         for(auto it=counter.begin(); it != counter.end(); it++){
             marker[it->second]++;
         }
-        int left = 0 , right = n, remainRight = int(counter.size());
+        int  remainRight = int(counter.size());
         int ans = n;
         for(auto it = marker.begin() ; it != marker.end(); it++){
             //cout <<"( " << it->first << " " << it->second << ") ";
-            ans = min(ans, left + right - remainRight * it->first);
-            left += it->first * it->second;
-            right -= it->first * it->second;
+            ans = min(ans, n - remainRight * it->first);
             remainRight -= it->second;
         }
         //cout << endl;
