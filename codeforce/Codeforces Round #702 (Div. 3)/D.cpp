@@ -76,3 +76,52 @@ void dfs(int depth[], Node *tree){
         dfs(depth, tree->right);
     }
 }
+
+
+/**
+* another solution of the problem
+*/
+#include<bits/stdc++.h>
+using namespace std;
+void build(int first, int last, vector<int>const &nums, vector<int> &d, int level){
+    if(first > last || last < 0) return;
+    if(first == last){
+        d[first] = level;
+        return;
+    } 
+    int m = first;
+    for(int i = first +1;i<= last; i++){
+        if(nums[m] < nums[i]) m = i;
+    }
+
+    d[m] = level;
+    build(first, m -1 , nums, d,level + 1);
+    build(m + 1, last, nums, d, level + 1);
+}
+void solve(){
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    vector<int>depth(n, 0);
+    for(int &num  : nums) cin >> num;
+    build(0, n -1, nums, depth, 0);
+    for(int i = 0; i<n-1; i++) cout << depth[i] << " ";
+    cout << depth[n -1] << endl;
+}
+int main(){
+    #ifndef ONLINE_JUDGE
+     freopen("in.in", "r", stdin);
+     freopen("out.in", "w", stdout);
+    #endif
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    int t;
+    cin >> t;
+    while(t--){
+        solve();
+    }
+
+    return 0;
+}
+
