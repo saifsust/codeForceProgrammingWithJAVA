@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
-const int N = 200005;
+const int N = 5 * 200005;
 map<long long , long long> SGT[N];
 
 void build(int first, int last, long long  node, int nums[]) {
