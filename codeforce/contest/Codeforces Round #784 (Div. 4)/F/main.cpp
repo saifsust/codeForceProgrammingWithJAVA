@@ -11,46 +11,43 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    const int N = 1003;
-    int T, n;
+    int T;
     cin >> T;
+
     for (int t = 1; t <= T; t++) {
+        int n;
         cin >> n;
-        vector<int> candies(n);
+        vector<int>cn(n);
 
         for (int i = 0; i < n; i++) {
-            cin >> candies[i];
+            cin >> cn[i];
         }
 
         int left = 0, right = n - 1;
-        long long a = 0, b = 0;
-        long long  tc = 0;
-        long long ans = INT_MIN;
+
+        int cntb = 0 , cnta = 0;
+
+        int ans = 0, counter = 0;
+
         while (left <= right) {
-            a += candies[left++];
-            ++tc;
-
-            if (a == b) {
-                ans = tc;
+            cnta += cn[left];
+            ++counter;
+            ++left;
+            if (cnta == cntb) {
+                ans = counter;
             }
 
-            //cout << left << endl;
-
-            while ( left <= right && b <= a) {
-                cout << right << endl;
-                b += candies[right--];
-
-                ++tc;
-                if ( a == b ) {
-                    ans = tc;
+            while (left <= right && cntb <= cnta) {
+                cntb += cn[right--];
+                ++counter;
+                if (cntb == cnta) {
+                    ans = counter;
                 }
-            }
 
-            // cout << left << " " << right << endl;
+            }
         }
 
-        cout << (ans == INT_MIN ? 0 : ans) << endl;
-
+        cout << ans << endl;
 
     }
 
