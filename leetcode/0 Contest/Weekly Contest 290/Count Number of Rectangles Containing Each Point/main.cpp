@@ -29,7 +29,7 @@ public:
     }
     
     
-    // greater or equal 
+    // greater or equal own implementation
     
     int lower_bound(int first , int last, int val, vector<int> &xx){
         if(val > xx[xx.size()-1]) return xx.size();
