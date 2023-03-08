@@ -1,16 +1,13 @@
 package com.courseorder;
 
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CourseOrder {
 
     public Object[] courseOrder(String[][] courses) {
         if (courses == null || courses.length == 0) {
-            return null;
+            return new Object[0];
         }
 
         Stack<String> stack = new Stack<>();
