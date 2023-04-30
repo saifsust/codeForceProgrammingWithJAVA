@@ -29,31 +29,25 @@ public:
     }
 
     pair<int, int> bfs(int n, int source, vector<int> graph[]){
-        queue<int> Q;
+        priority_queue<int, vector<int>, greater<int>> Q;
         Q.push(source);
         const int INF = (int) 1e8;
         vector<int> heights(n, INF);
         heights[source] = 0;
+        int mx = 0;
         while(!Q.empty()){
-            int pnt = Q.front();
+            int pnt = Q.top();
             Q.pop();
             for(int next : graph[pnt]){
               int h = heights[pnt] + 1; 
-              if(h <= heights[next]){
+              if(h < heights[next]){
                   heights[next] = h;
+                  if(mx < h) mx = h;
                   Q.push(next);
               }
             }
         }
-        return make_pair(getMax(heights),source);
-    }
-
-    int getMax(vector<int> heights){
-        int mx = 0;
-        for(int h : heights){
-            if(mx < h) mx = h;
-        }
-        return mx;
+        return make_pair(mx, source);
     }
 
 };
