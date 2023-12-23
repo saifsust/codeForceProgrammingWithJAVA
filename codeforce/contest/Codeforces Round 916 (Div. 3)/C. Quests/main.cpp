@@ -4,12 +4,16 @@ using namespace std;
 int main(){
         ios::sync_with_stdio(false);
         cin.tie(NULL);
+        const int R = 200000;
+        const int L = 1;
         int T;
         cin >> T;
         for(int t = 1; t <= T; t++){
                 int n, q;
 
                 cin >> n >> q;
+                assert(L<= n && n <=R);
+                assert(L<= q && q <= R);
                 vector<int> a(n), b(n);
 
                 for(int i  = 0; i<n; i++){
