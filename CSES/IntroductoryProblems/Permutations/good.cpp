@@ -6,11 +6,6 @@ int main(){
   cin.tie(0);
   int n;
   while(cin >> n){
-
-    if(n == 1){
-        cout << 1 ;
-        continue;
-    }
     if( 2<= n && n <= 3){
         cout << "NO SOLUTION"<<endl;
         continue;
